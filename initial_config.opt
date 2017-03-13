@@ -1,0 +1,40 @@
+# TPLS initial conditions configuration file.
+
+## Domain grid
+# Number of grid points in X (l), Y (m) and Z (n) directions. 
+# During execution, the first two dimensions are swapped so that as
+# far as PETSc, the toolkit used by TPLS, is concerned it is the first
+# dimension that is periodic.  
+maxl 257
+maxm 145
+maxn 153
+
+## Interface detection method.
+# Options:
+# lsm - level-set method (default)
+# dim - diffuse interface method
+idm lsm
+
+## Fluid flow
+# Reynolds number.
+re 1.0
+# The following two fluid viscosity values are typically the same.
+# Viscosity of the lower fluid.
+mu_minus 1.0
+# Viscosity of the upper fluid.
+mu_plus 1.0
+# Interface height, or height of lower liquid layer, expressed as
+# a proportion where 0 <= height <= 1.
+height 0.5
+# Pressure gradient.
+# Warning: do not change the pressure gradient unless you understand
+# the consequences this will have.
+dpdl -1.0
+# Surface tension scaling parameter.
+scap 1.0
+# Maximum frequency of perturbation of interface near inlet.
+omega_max 0.0
+# Time step (>0).
+dt 0.0001
+# Smooth width scale factor.
+smooth_width_scale 1.5

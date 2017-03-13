@@ -1,0 +1,16 @@
+#!/bin/bash --login
+# PBS job submission script for TPLS on ARCHER.
+
+# PBS job options (job name, total number of nodes needed, job time)
+#PBS -N tpls
+#PBS -l select=22
+#PBS -l walltime=0:10:00
+# ARCHER project code.
+#PBS -A z01
+
+# Change to the directory that the job was submitted from
+# (remember this should be on the /work filesystem)
+cd $PBS_O_WORKDIR
+
+# Launch TPLS using NNNN processes on the NN nodes above.
+aprun -n 512 twophase.x

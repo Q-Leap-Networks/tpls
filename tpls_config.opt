@@ -1,0 +1,55 @@
+# TPLS configuration file.
+
+## Process grid
+# Number of processes in the X and Y dimensions, which defines the
+# process grid which overlays the domain grid. 
+# TPLS assumes there is 1 process for the Z dimension.
+# The following conditions need to be respected:
+#  Number of processes available = num_procs_x * num_procs_y * 1 
+#  num_procs_x is a divisor of (maxl - 1)
+#  num_procs_y is a divisor of (maxm - 1)
+#  num_procs_x >= 1
+#  num_procs_y >= 1
+# TPLS will raise an error if these conditions do not hold.
+num_procs_x 2
+num_procs_y 2
+# Ask TPLS to select a process decomposition. If, "true" TPLS will
+# ignore "num_procs_x" and "num_procs_y" and instead choose a process
+# decomposition based on the size of the domain grid. TPLS will make a
+# best guess and this will be printed when TPLS runs. To see what TPLS
+# will choose then run the "grids" program as follows:
+# $ ./grids ptodgrid <N> <L> <M>
+# where N is the number of processes, and L and M are "maxl" and
+# "maxm" values of the domain e.g.
+# $ ./grids ptodgrid 512 257 145
+auto_decomp false
+
+## Momentum equation solver configuration
+# Number of iterations in solvers for u, v and w velocities (>= 1).
+mom_u 30
+mom_v 30
+mom_w 30
+## Level-set equation solver configuration
+# Number of iterations in solver (>= 1).
+levelset 10
+
+# Maxu
+maxu 10.0
+
+## TPLS operation
+# PHI channel .dat file output frequency (>= 1).
+phi_dat_frequency 1
+# UVW channel .dat file output frequency (>= 1).
+uvw_dat_frequency 1
+# Backup channel .dat file output frequency (>= 1).
+backup_frequency 1
+# Backup files in text format (= T or F).
+backup_text_format T
+# Backup files in netCDF hdf5 format (= T or F).
+backup_hdf5_format T
+# Number of timesteps (>= 1).
+num_timesteps 1
+
+## DIM equation solver configuration
+#  Number of iterations
+max_iteration_dim 18
