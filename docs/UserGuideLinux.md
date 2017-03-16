@@ -11,12 +11,12 @@ You will need:
 
 * A FORTRAN compiler. At present the GNU Fortran and Cray compilers can be used.
 * An MPI library.
-* PETSc 3.5.2.1. PETSc can be downloaded from the [PETSc web site](http://www.mcs.anl.gov/petsc/).
+* PETSc 3.6 PETSc can be downloaded from the [PETSc web site](http://www.mcs.anl.gov/petsc/).
     * Due to API changes within PETSc, earlier versions will **not** work.
-    * The `PETSC_DIR` environment variable should be set to point to the PETSc 3.4.3 distribution. If this has been installed via a package manager, then this variable should be set to the parent of the `conf` directory holding the `petscvariables` script (this is used by the TPLS Makefile). Common locations of this directory are `/usr/` or `/usr/local`.
+    * The `PETSC_DIR` environment variable should be set to point to the PETSc 3.6 distribution. If this has been installed via a package manager, then this variable should be set to the parent of the `conf` directory holding the `petscvariables` script (this is used by the TPLS Makefile). Common locations of this directory are `/usr/` or `/usr/local`.
     * If using shared libraries, the `LD_LIBRARY_PATH` environment variable should point to the `lib` directory containing the PETSc libraries.
-* NetCDF 4.3.2, NetCDF-Fortran 4.2, HDF5 1.8.12
-    * Note that more recent versions of HDF5 are not compatible with NetCDF 4.3.2
+* NetCDF 4.3, NetCDF-Fortran 4.2, HDF5 1.8
+    * Note that more recent versions of HDF5 than 1.8.12 are not compatible with NetCDF 4.3.2
     * The `NETCDF_FORTRAN_DIR` environment variaible should be set to point to the directory where NetCDF Fortran is installed (should contain `/lib` and `/include` directories).
     * The `NETCDF_DIR` environment variaible should be set to point to the directory where NetCDF is installed (should contain `/lib` and `/include` directories).
     * The `HDF5_DIR` environment variaible should be set to point to the directory where HDF5 is installed (should contain `/lib` and `/include` directories).

@@ -37,7 +37,7 @@ program tpls_program
 
   implicit none
 
-#include "finclude/petscdef.h"
+#include "petsc/finclude/petscdef.h"
 
   ! Included from tpls_mpi
   ! integer :: master_id
@@ -231,9 +231,9 @@ program tpls_program
   ! will abort silently.  
   call get_size_and_rank(ierr, my_id, num_procs)
 
-  write(*,'(A,I6,A8)') &
-       'TPLS (version $Revision: 328 $) process ', my_id, ' started'
   if (is_master(my_id)) then
+     write(*,'(A,I6,A8)') &
+       'TPLS (version $Revision: 351 $) process ', my_id, ' started'
      write(*,'(A,I6)') 'Number of processes available: ', num_procs
   end if
   flush stdout
@@ -241,13 +241,15 @@ program tpls_program
   ! Read command-line options and options file.
 
   call get_configuration(default_filename,default_config_dir,config_dir,&
-       options,num_options,ierr,message)
+       options,num_options,is_master(my_id),ierr,message)
   if (ierr/=0) call abort(ierr, message, my_id)
 
   ! Load initial conditions configuration file.
 
   call get_filepath(config_dir,initial_config_file,filename)
-  write(*,'(A,A)') 'Loading initial conditions configuration file: ',trim(filename)
+  if (is_master(my_id)) then
+     write(*,'(A,A)') 'Loading initial conditions configuration file: ',trim(filename)
+  endif
   call load_options(filename,initial_conditions,num_initial_conditions,ierr)
   if (ierr==option_file_not_found_err) then
      write(message,'(A,A)') 'Error: Initial conditions configuration file not found: ',trim(filename)

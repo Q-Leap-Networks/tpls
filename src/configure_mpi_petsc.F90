@@ -20,7 +20,7 @@ module tpls_configure_mpi_petsc
   public :: get_size_and_rank
   public :: compute_initial_strides
 
-#include "finclude/petscdef.h"
+#include "petsc/finclude/petscdef.h"
 
 contains
 
@@ -120,7 +120,6 @@ contains
     KSPType :: solver_type
     PC :: pc
     PCType :: pc_type
-    MatNullSpace :: nullspace
 
     periodic(1) = .false.
     periodic(2) = .true.
@@ -166,13 +165,6 @@ contains
     if(ierr /= 0 ) call abort(ierr, 'Failed to call KSPSetComputeOperators',my_id)
     call KSPSetDM(ksp, da, ierr)
     if(ierr /= 0 ) call abort(ierr, 'Failed to call KSPSetDM',my_id)
-    call MatNullSpaceCreate(PETSC_COMM_WORLD, PETSC_TRUE, 0, (/PETSC_NULL_OBJECT/),  &
-         nullspace, ierr)
-    if(ierr /= 0 ) call abort(ierr, 'Failed to call MatNullSpaceCreate',my_id)
-    call KSPSetNullSpace(ksp, nullspace, ierr)
-    if(ierr /= 0 ) call abort(ierr, 'Failed to call KSPSetNullSpace',my_id)
-    call MatNullSpaceDestroy(nullspace, ierr)
-    if(ierr /= 0 ) call abort(ierr, 'Failed to call MatNullSpaceDestroy',my_id)
 
     call calculate_indices(da, sx, sy, ex, ey, n_local_x, n_local_y, my_id, ierr)
     if(ierr /= 0 ) call abort(ierr, 'Failed to call calculate_indices ',my_id)

@@ -1,8 +1,8 @@
 # TPLS Makefile
 #
-# $Date:: 2015-02-26 22:16:56 +0000 (Thu, 26 Feb 2015)     $
+# $Date:: 2016-06-06 15:55:34 +0200 (Mon, 06 Jun 2016)     $
 # $Author:: ibethune                                       $
-# $Revision:: 322                                          $
+# $Revision:: 350                                          $
 
 FRUIT_SRC=thirdparty/fruit/fruit_util.f90 thirdparty/fruit/fruit.f90
 
@@ -24,7 +24,7 @@ INITIAL_CONDITIONS_EXE=create_initial_conditions
 GRIDS_EXE=grids
 TEST_EXE=run_tests
 
-include $(PETSC_DIR)/conf/petscvariables
+include $(PETSC_DIR)/lib/petsc/conf/petscvariables
 
 NETCDF_INCLUDES=-I$(NETCDF_FORTRAN_DIR)/include
 NETCDF_LIB=-L$(NETCDF_FORTRAN_DIR)/lib -lnetcdff -L$(NETCDF_DIR)/lib -lnetcdf -L$(HDF5_DIR)/lib -lhdf5_hl -lhdf5 -lz
@@ -32,7 +32,7 @@ NETCDF_LIB=-L$(NETCDF_FORTRAN_DIR)/lib -lnetcdff -L$(NETCDF_DIR)/lib -lnetcdf -L
 archer : $(addsuffix .archer, $(GRIDS_EXE) $(TPLS_EXE) $(INITIAL_CONDITIONS_EXE) $(TEST_EXE))
 
 twophase.x.archer : $(SRC)
-	ftn -craype-verbose -O3 -std=f2003 -fopenmp $^ -o $(TPLS_EXE)
+	ftn -craype-verbose -O3 -g -std=f2003 -fopenmp $^ -o $(TPLS_EXE)
 
 create_initial_conditions.archer : $(INITIAL_CONDITIONS_SRC)
 	ftn -O3 -std=f2003 $^ -o $(INITIAL_CONDITIONS_EXE)

@@ -37,13 +37,15 @@ contains
   !! - If directory does not exist or file does not exist then an
   !!   error code and message are set.
   subroutine get_configuration(default_filename,&
-       default_config_dir,config_dir,options,num_options,ierr,message)
+       default_config_dir,config_dir,options,num_options,&
+       is_master,ierr,message)
 
     character(len=*),  intent(in)  :: default_filename
     character(len=*),  intent(in)  :: default_config_dir
     character(len=*),  intent(out) :: config_dir
     character(len=80),dimension(:,:),allocatable,intent(out) :: options
     integer,           intent(out) :: num_options
+    logical,           intent(in)  :: is_master
     integer,           intent(out) :: ierr
     character(len=256),intent(out) :: message
 
@@ -72,7 +74,9 @@ contains
        return
     end if
 
-    write(*,'(A,A)') 'Loading options from options file: ',trim(filename)
+    if (is_master) then
+       write(*,'(A,A)') 'Loading options from options file: ',trim(filename)
+    end if
     call load_options(filename,options,num_options,ierr)
     if (ierr==option_file_not_found_err) then
        write(message,'(A,A)') 'Error: Options file not found: ',trim(filename)

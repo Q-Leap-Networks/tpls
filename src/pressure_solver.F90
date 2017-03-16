@@ -15,7 +15,7 @@ module pressure_solver
 
   implicit none
 
-#include "finclude/petscdef.h"
+#include "petsc/finclude/petscdef.h"
 
   ! Included from tpls_state
   ! PetscInt :: maxl, maxm, maxn
@@ -210,7 +210,7 @@ contains
     KSP, intent(inout) :: ksp
     Vec, intent(inout) :: x  ! x is a global vector.
     PetscErrorCode, intent(inout) ::  ierr
-    PetscInt, intent(inout) :: ctx(*)
+    PetscInt, intent(inout) :: ctx
 
     ! Local variables
     DM :: dm
@@ -231,14 +231,14 @@ contains
   end subroutine copy_pressure_in_to_petsc
 
 
-  subroutine compute_rhs(ksp, b, dummy, ierr)
+  subroutine compute_rhs(ksp, b, ctx, ierr)
 
     implicit none
 
     ! Arguments
     KSP, intent(inout) :: ksp
     Vec, intent(inout) :: b  ! b is a global vector.
-    integer, intent(inout) :: dummy(*)
+    PetscInt, intent(inout) :: ctx
     PetscErrorCode, intent(inout) :: ierr
 
     ! Local variables
@@ -286,24 +286,28 @@ contains
     end if
 
     call DMDAVecRestoreArrayF90(dm, b, b_3da, ierr)
+
+    call VecAssemblyBegin(b, ierr)
+    call VecAssemblyEnd(b, ierr)
+
   end subroutine compute_rhs
 
 
-  subroutine compute_matrix(ksp, A, B, str, dummy, ierr)
+  subroutine compute_matrix(ksp, A, B, ctx, ierr)
 
     implicit none
 
     ! Arguments
     KSP, intent(inout) :: ksp
     Mat, intent(inout) :: A, B
-    MatStructure, intent(inout) :: str
-    integer, intent(inout) :: dummy(*)
+    PetscInt, intent(inout) :: ctx
     PetscErrorCode, intent(inout) :: ierr
 
     ! Local variables
     PetscInt :: i, j, k
     PetscScalar    :: v(7)
     MatStencil     :: row(4), col(4, 7)
+    MatNullSpace   :: nullspace
 
     do k = z_start, z_max
        do j = y_start, y_max
@@ -424,12 +428,16 @@ contains
     call MatAssemblyBegin(B, MAT_FINAL_ASSEMBLY, ierr)
     call MatAssemblyEnd(B, MAT_FINAL_ASSEMBLY, ierr)
 
-    str = SAME_NONZERO_PATTERN
-
     if (A.ne.B) then
        call MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY, ierr)
        call MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY, ierr)
     endif
+
+    call MatNullSpaceCreate(PETSC_COMM_WORLD, PETSC_TRUE, 0, (/PETSC_NULL_OBJECT/),  &
+         nullspace, ierr)
+    call MatSetNullSpace(A, nullspace, ierr)
+    call MatNullSpaceDestroy(nullspace, ierr)
+
   end subroutine compute_matrix
 
 

@@ -26,15 +26,15 @@ UnZIP TPLS:
 Set up modules
 --------------
 
-TPLS uses the GNU FORTRAN compiler and PETSc 3.5.2.1. To set up your environment to use these modules, run:
+TPLS uses the GNU FORTRAN compiler and PETSc 3.6.1.0. To set up your environment to use these modules, run:
 
     > source scripts/setup_modules.sh
 
 This does:
 
     module swap PrgEnv-cray PrgEnv-gnu
-    module load cray-petsc/3.5.2.1
-    module load cray-netcdf-hdf5parallel/4.3.2
+    module load cray-petsc/3.6.1.0
+    module load cray-netcdf-hdf5parallel/4.3.3.1
 
 This only has to be done once when you log in.
 

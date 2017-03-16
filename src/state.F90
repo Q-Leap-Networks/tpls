@@ -11,7 +11,7 @@
 
 module tpls_state
 
-#include "finclude/petscdef.h"
+#include "petsc/finclude/petscdef.h"
 
   use petsc 
 
