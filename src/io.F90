@@ -296,10 +296,8 @@ contains
     integer cmode, ncid, varid, dimid(3)
     integer psizes(3), gsizes(3), start(3), count(3)
     character(len=60) :: filename
-    character(len=256) ::strg
 
-    write(strg,*) iteration
-    filename = trim(dataname)//'_'//trim(strg)//'.nc'
+    write(filename, '(A,A1,I4.4,A3)') trim(dataname), '_', iteration, '.nc'
     ! indicate to use PnetCDF to carry out I/O
     cmode = IOR(NF90_NETCDF4, NF90_MPIIO)
     ! Create output file
