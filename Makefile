@@ -1,8 +1,8 @@
 # TPLS Makefile
 #
-# $Date:: 2016-06-06 15:55:34 +0200 (Mon, 06 Jun 2016)     $
+# $Date:: 2015-02-26 22:16:56 +0000 (Thu, 26 Feb 2015)     $
 # $Author:: ibethune                                       $
-# $Revision:: 350                                          $
+# $Revision:: 322                                          $
 
 FRUIT_SRC=thirdparty/fruit/fruit_util.f90 thirdparty/fruit/fruit.f90
 
@@ -24,43 +24,29 @@ INITIAL_CONDITIONS_EXE=create_initial_conditions
 GRIDS_EXE=grids
 TEST_EXE=run_tests
 
-include $(PETSC_DIR)/lib/petsc/conf/petscvariables
+BASE_DIR=/apps/local/opse
 
-NETCDF_INCLUDES=-I$(NETCDF_FORTRAN_DIR)/include
-NETCDF_LIB=-L$(NETCDF_FORTRAN_DIR)/lib -lnetcdff -L$(NETCDF_DIR)/lib -lnetcdf -L$(HDF5_DIR)/lib -lhdf5_hl -lhdf5 -lz
+INCLUDES=-I$(BASE_DIR)/include
+# Uncomment for petsc 3.7.x
+# INCLUDES=$(INCLUDES) -I$(BASE_DIR)/include/petsc
+LIBS= -lpetsc -lnetcdff -lnetcdf -lhdf5_hl -lhdf5
 
-archer : $(addsuffix .archer, $(GRIDS_EXE) $(TPLS_EXE) $(INITIAL_CONDITIONS_EXE) $(TEST_EXE))
+all: $(TPLS_EXE) $(INITIAL_CONDITIONS_EXE) $(GRIDS_EXE) $(TEST_EXE)
 
-twophase.x.archer : $(SRC)
-	ftn -craype-verbose -O3 -g -std=f2003 -fopenmp $^ -o $(TPLS_EXE)
+twophase.x : $(SRC)
+	mpif90.openmpi-gcc-2.0 -O3 -fopenmp -std=f2003 $^ -o $(TPLS_EXE) \
+	  $(INCLUDES) $(LIBS)
 
-create_initial_conditions.archer : $(INITIAL_CONDITIONS_SRC)
-	ftn -O3 -std=f2003 $^ -o $(INITIAL_CONDITIONS_EXE)
+create_initial_conditions : $(INITIAL_CONDITIONS_SRC) 
+	mpif90.openmpi-gcc-2.0 -O3 -std=f2003 -pedantic $^ \
+	  -o $(INITIAL_CONDITIONS_EXE) $(INCLUDES) $(LIBS)
 
-grids.archer : $(GRIDS_SRC)
-	ftn -O3 -std=f2003 $^ -o $(GRIDS_EXE)
+grids : $(GRIDS_SRC)
+	mpif90.openmpi-gcc-2.0 -O3 -Wall -std=f2003 -pedantic $^ -o $(GRIDS_EXE)
 
-run_tests.archer : $(TEST_SRC) $(TESTS)
-	ftn -O3 -std=f2003 $(FRUIT_SRC) $^ -o $(TEST_EXE)
-
-linux : $(addsuffix .linux, $(GRIDS_EXE) $(TPLS_EXE) $(INITIAL_CONDITIONS_EXE) $(TEST_EXE))
-
-twophase.x.linux : $(SRC)
-	mpif90 -O3 -std=f2003 -fopenmp $^ $(PETSC_FC_INCLUDES) $(NETCDF_INCLUDES) -o $(TPLS_EXE) $(PETSC_LIB) $(NETCDF_LIB)
-#	mpif90 -O3 -Wall -std=f2003 -fopenmp $^ $(PETSC_FC_INCLUDES) -o $(TPLS_EXE) $(PETSC_LIB)
-
-twophase.x.linux.debug0 : $(SRC)
-	mpif90 -g -O0 -fopenmp $^ $(PETSC_FC_INCLUDES) $(NETCDF_INCLUDES) -o $(TPLS_EXE) $(PETSC_LIB) $(NETCDF_LIB)
-
-create_initial_conditions.linux : $(INITIAL_CONDITIONS_SRC) 
-	mpif90 -O3 -std=f2003 -pedantic $^ $(PETSC_FC_INCLUDES) $(NETCDF_INCLUDES) -o $(INITIAL_CONDITIONS_EXE) $(PETSC_LIB) $(NETCDF_LIB)
-#	mpif90 -O3 -Wall -std=f2003 -pedantic $^ -o $(INITIAL_CONDITIONS_EXE)
-
-grids.linux : $(GRIDS_SRC)
-	mpif90 -O3 -Wall -std=f2003 -pedantic $^ -o $(GRIDS_EXE)
-
-run_tests.linux : $(TEST_SRC) $(TESTS)
-	mpif90 -O3 -Wall -std=f2003 -pedantic $(FRUIT_SRC) $^ $(PETSC_FC_INCLUDES) $(NETCDF_INCLUDES) -o $(TEST_EXE) $(PETSC_LIB) $(NETCDF_LIB)
+run_tests : $(TEST_SRC) $(TESTS)
+	mpif90.openmpi-gcc-2.0 -O3 -Wall -std=f2003 -pedantic $(FRUIT_SRC) $^ \
+	   -o $(TEST_EXE) $(INCLUDES) $(LIBS)
 
 apidoc : Doxyfile src/*.f90 src/*.F90
 	doxygen
