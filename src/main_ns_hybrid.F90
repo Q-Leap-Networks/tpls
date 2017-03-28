@@ -212,7 +212,6 @@ program tpls_program
   integer :: count
   integer :: backup
 
-  t0 = mpi_wtime() 
 
   ! ******************************************************************************************
 
@@ -224,6 +223,8 @@ program tpls_program
 
   ! Initialisation of petsc
   call initialise(ierr)
+
+  t0 = mpi_wtime() 
 
   ! Set up MPI.
   ! After set up master_id will be responsible for printing
